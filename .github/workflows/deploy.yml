@@ -29,4 +29,5 @@ jobs:
           aws-region: us-east-1
 
       - name: Deploy
-        run: cdk deploy --require-approval never
+        run: cdk deploy --app "python app.py" --require-approval never
+             working-directory: cdk-project
