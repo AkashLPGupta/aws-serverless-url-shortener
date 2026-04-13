@@ -4,27 +4,19 @@ on:
   push:
     branches: [main]
 
-permissions:
-  contents: read
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
       - name: Install dependencies
         run: pip install aws-cdk-lib constructs
-
-      - name: Install project dependencies
-        run: pip install -r requirements.txt
-        working-directory: cdk-project
 
       - name: Install CDK
         run: npm install -g aws-cdk
@@ -37,5 +29,4 @@ jobs:
           aws-region: us-east-1
 
       - name: Deploy
-        run: cdk deploy --app "python app.py" --require-approval never
-        working-directory: cdk-project
+        run: cdk deploy --require-approval never
