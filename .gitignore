@@ -1,0 +1,7 @@
+__pycache__/
+.env
+*.pyc
+cdk.out/
+.venv/
+node_modules/
+*.zip

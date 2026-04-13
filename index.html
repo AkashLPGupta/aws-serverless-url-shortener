@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <title>URL Shortener</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px;
+           margin: 80px auto; padding: 20px; background: #f5f5f5; }
+    h1   { color: #1F497D; }
+    input { width: 100%; padding: 12px; font-size: 16px;
+            border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+    button { margin-top: 12px; width: 100%; padding: 12px;
+             background: #1F497D; color: white; font-size: 16px;
+             border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #163a63; }
+    #result { margin-top: 20px; padding: 16px; background: #e8f4e8;
+              border-radius: 4px; display: none; }
+    #result a { color: #1F497D; word-break: break-all; }
+    #error  { margin-top: 20px; padding: 16px; background: #fde8e8;
+              border-radius: 4px; display: none; color: #c00; }
+  </style>
+</head>
+<body>
+  <h1>URL Shortener</h1>
+  <p>Enter a long URL and get a short link instantly.</p>
+  <input type='url' id='longUrl' placeholder='https://your-long-url.com' />
+    <button onclick='shorten()'>Shorten URL</button>
+  <div id='result'>
+    <strong>Your short URL:</strong><br>
+    <a id='shortLink' href='#' target='_blank'></a>
+  </div>
+  <div id='error' id='error'></div>
+
+  <script>
+    // IMPORTANT: Replace this with your actual API Gateway URL
+    const API_URL = 'https://tpl7rx0mz3.execute-api.us-east-1.amazonaws.com/prod';
+
+    async function shorten() {
+      const longUrl = document.getElementById('longUrl').value;
+      if (!longUrl) { alert('Please enter a URL'); return; }
+
+      try {
+        const resp = await fetch(API_URL + '/urls', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ longUrl })
+        });
+        const data = await resp.json();
+        const shortUrl = API_URL + '/urls/' + data.shortCode;
+        document.getElementById('shortLink').href = shortUrl;
+        document.getElementById('shortLink').textContent = shortUrl;
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('error').style.display = 'none';
+      } catch (err) {
+        document.getElementById('error').textContent = 'Error: ' + err.message;
+        document.getElementById('error').style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>
