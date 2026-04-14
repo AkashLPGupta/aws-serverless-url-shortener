@@ -11,7 +11,7 @@ class UrlShortenerStack(Stack):
 
         # DynamoDB Table
         table = ddb.Table(self, 'UrlTable',
-            table_name='url-shortener-table',
+            table_name='url-shortener-table-cdk',
             partition_key=ddb.Attribute(
                 name='shortCode', type=ddb.AttributeType.STRING),
             billing_mode=ddb.BillingMode.PAY_PER_REQUEST,
@@ -20,7 +20,7 @@ class UrlShortenerStack(Stack):
 
         # Lambda Function
         fn = lmb.Function(self, 'UrlFunction',
-            function_name='url-shortener-function',
+            function_name='url-shortener-function-cdk',
             runtime=lmb.Runtime.PYTHON_3_11,
             handler='handler.lambda_handler',
             code=lmb.Code.from_asset('lambda'),
