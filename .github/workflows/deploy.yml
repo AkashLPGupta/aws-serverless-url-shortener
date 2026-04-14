@@ -2,38 +2,35 @@ name: Deploy to AWS
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+
+permissions:
+  contents: read
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: write
-      id-token: write
-
     steps:
-
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 1
+          persist-credentials: true
+          fetch-depth: 0
 
-      - name: Set up Python 3.11
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install Python dependencies
+      - name: Install dependencies
+        run: pip install aws-cdk-lib constructs
+
+      - name: Install project dependencies
         run: pip install -r requirements.txt
+        working-directory: cdk-project
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install AWS CDK
+      - name: Install CDK
         run: npm install -g aws-cdk
 
       - name: Configure AWS credentials
@@ -43,5 +40,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: CDK Deploy
-        run: cdk deploy --require-approval never
+      - name: Deploy
+        run: cdk deploy --app "python app.py" --require-approval never
+        working-directory: cdk-project
